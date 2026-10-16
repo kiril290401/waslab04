@@ -2,8 +2,8 @@
 
 Students:
 
-* Surname_1, First_name_1
+* Kamenov, Kiril
 
-* Surname_2, First_name_2
+* Serra, Arnau
 
 Your deployed webapp at Render|Heroku|... (task #6): <https://*********.***.***/>
