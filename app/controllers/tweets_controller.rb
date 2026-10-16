@@ -4,6 +4,7 @@ class TweetsController < ApplicationController
   # GET /tweets
   def index
     @tweets = Tweet.order(created_at: :desc)
+    @tweet = Tweet.new
   end
 
   # GET /tweets/1
@@ -30,10 +31,13 @@ class TweetsController < ApplicationController
         else
           session[:authored_ids] = [@tweet.id]
         end
-        format.html { redirect_to @tweet, notice: "Tweet was successfully created." }
+        format.html { redirect_to root_path, notice: "Tweet was successfully created." }
         format.json { render :show, status: :created, location: @tweet }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html do
+        @tweets = Tweet.order(created_at: :desc)
+        render :index, status: :unprocessable_entity
+        end
         format.json { render json: @tweet.errors, status: :unprocessable_entity }
       end
     end

@@ -1,16 +1,10 @@
-<p style="color: green"><%= notice %></p>
-
-<% content_for :title, "Tweets" %>
-
-<h1>Tweets</h1>
-
-<div id="tweets">
-  <% @tweets.each do |tweet| %>
-    <%= render tweet %>
-    <%= button_to 'Like this tweet', like_tweet_path(tweet), method: :put %>
-    <p><%= link_to "Show this tweet", tweet %></p>
-    <hr>
-  <% end %>
+<div class="walltweet">
+  <%= render "form", tweet: @tweet %>
 </div>
 
-<%= link_to "New tweet", new_tweet_path %>
+<% @tweets.group_by { |t| t.created_at.to_date }.each do |date, tweets| %>
+  <div class="date-sep"><%= date.strftime("%A, %B %-d, %Y") %></div>
+  <% tweets.each do |tweet| %>
+    <%= render tweet %>
+  <% end %>
+<% end %>

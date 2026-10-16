@@ -1,13 +1,22 @@
-<div id="<%= dom_id tweet %>">
-  <p>
-    <strong>Author:</strong>
-    <%= tweet.author %>
-  </p>
+<div class="wotitem" id="<%= dom_id tweet %>">
+  <div class="likes">
+    <span class="numlikes"><%= tweet.likes %></span>
+    <span class="smallfont">likes</span>
 
-  <p>
-    <strong>Content:</strong>
-    <%= tweet.content %>
-  </p>
-  <p><strong>Created at:</strong> <%= tweet.created_at.strftime("%A, %Y-%m-%d %H:%M") %></p>
-  <p><strong>Likes:</strong> <%= tweet.likes %></p>
+    <% if session[:authored_ids]&.include?(tweet.id) %>
+      <%# Tweet creado por mí: solo puedo borrarlo %>
+      <%= button_to "Destroy", tweet, method: :delete, class: "btn-danger" %>
+    <% elsif session[:liked_ids]&.include?(tweet.id) %>
+      <%# Tweet de otro al que ya he dado like: botón desactivado %>
+      <%= button_to "Liked", like_tweet_path(tweet), method: :put, disabled: true %>
+    <% else %>
+      <%# Tweet de otro sin like todavía %>
+      <%= button_to "Like", like_tweet_path(tweet), method: :put %>
+    <% end %>
+  </div>
+
+  <div class="item">
+    <h4><em><%= tweet.author %></em> · <%= tweet.created_at.strftime("%H:%M") %></h4>
+    <p><%= tweet.content %></p>
+  </div>
 </div>

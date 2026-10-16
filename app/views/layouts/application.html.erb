@@ -19,9 +19,22 @@
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app %>
+    # <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
   </head>
 
   <body>
-    <%= yield %>
+    <div class="container">
+      <h1 class="wottitle">Wall of Tweets · RoR Edition</h1>
+      <div class="subtitle">A minimal wall for quick thoughts. Clean and focused.</div>
+
+      <% if notice.present? %>
+        <div class="flash"><span class="ok">✓</span> <%= notice %></div>
+      <% end %>
+      <% if alert.present? %>
+        <div class="flash flash--alert"><span class="err">✕</span> <%= alert %></div>
+      <% end %>
+
+      <%= yield %>
+    </div>
   </body>
 </html>
