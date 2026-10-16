@@ -1,5 +1,5 @@
 class TweetsController < ApplicationController
-  before_action :set_tweet, only: %i[ show edit update destroy ]
+  before_action :set_tweet, only: %i[ show edit update destroy like ]
 
   # GET /tweets
   def index
@@ -38,7 +38,7 @@ class TweetsController < ApplicationController
       end
     end
   end
-  
+
   # PATCH/PUT /tweets/1
   def update
     if @tweet.update(tweet_params)
@@ -62,6 +62,17 @@ class TweetsController < ApplicationController
         format.json { head :no_content }
       end
     end
+  end
+
+  #LIKE /tweets/:id/like
+  def like
+    session[:liked_ids] ||= []                      
+    unless session[:liked_ids].include?(@tweet.id) 
+      @tweet.likes += 1
+      @tweet.save
+      session[:liked_ids] << @tweet.id             
+    end
+    redirect_to root_path                           
   end
 
   private
