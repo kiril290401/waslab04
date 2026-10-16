@@ -23,13 +23,22 @@ class TweetsController < ApplicationController
   def create
     @tweet = Tweet.new(tweet_params)
 
-    if @tweet.save
-      redirect_to @tweet, notice: "Tweet was successfully created."
-    else
-      render :new, status: :unprocessable_content
+    respond_to do |format|
+      if @tweet.save
+        if session[:authored_ids]
+          session[:authored_ids] << @tweet.id
+        else
+          session[:authored_ids] = [@tweet.id]
+        end
+        format.html { redirect_to @tweet, notice: "Tweet was successfully created." }
+        format.json { render :show, status: :created, location: @tweet }
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @tweet.errors, status: :unprocessable_entity }
+      end
     end
   end
-
+  
   # PATCH/PUT /tweets/1
   def update
     if @tweet.update(tweet_params)
@@ -41,8 +50,18 @@ class TweetsController < ApplicationController
 
   # DELETE /tweets/1
   def destroy
-    @tweet.destroy!
-    redirect_to tweets_path, notice: "Tweet was successfully destroyed.", status: :see_other
+    if session[:authored_ids].nil? || !session[:authored_ids].include?(@tweet.id)
+      respond_to do |format|
+        format.html { redirect_to @tweet, alert: "You are not allowed to delete this tweet", status: :see_other }
+        format.json { head :forbidden }
+      end
+    else
+      @tweet.destroy!
+      respond_to do |format|
+        format.html { redirect_to tweets_path, notice: "Tweet was successfully destroyed.", status: :see_other }
+        format.json { head :no_content }
+      end
+    end
   end
 
   private
